@@ -21,6 +21,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
@@ -35,6 +36,8 @@ import java.util.List;
 public class Probe implements ClientModInitializer {
 	private static final Logger LOG = LoggerFactory.getLogger("PROBE");
 	private static int t;
+	public static volatile SlotActionType blocked;
+	public static volatile int cancelled;
 	private static final boolean shots = true;
 
 	@Override
@@ -154,6 +157,7 @@ public class Probe implements ClientModInitializer {
 				LOG.info("PROBE scrambled: hotbar [{}] main [{}] offhand [{}]", dump(c.player.getInventory(), 0, 9), dump(c.player.getInventory(), 9, 36), dump(c.player.getInventory(), 40, 41));
 				capture(c, "gallery-3-scrambled.png");
 			}
+			case 81 -> blocked = SlotActionType.SWAP;
 			case 82 -> key(c, GLFW.GLFW_KEY_L, GLFW.GLFW_PRESS);
 			case 84 -> key(c, GLFW.GLFW_KEY_F1, GLFW.GLFW_PRESS);
 			case 85 -> key(c, GLFW.GLFW_KEY_F1, GLFW.GLFW_RELEASE);
@@ -162,7 +166,11 @@ public class Probe implements ClientModInitializer {
 				LOG.info("PROBE after L+F1 client: hotbar [{}] main [{}] offhand [{}] hudHidden={} (must be false) screen={}", dump(c.player.getInventory(), 0, 9), dump(c.player.getInventory(), 9, 36), dump(c.player.getInventory(), 40, 41), c.options.hudHidden, c.currentScreen);
 				server(server, p -> LOG.info("PROBE after L+F1 server: hotbar [{}] main [{}]", dump(p.getInventory(), 0, 9), dump(p.getInventory(), 9, 36)));
 			}
-			case 97 -> capture(c, "gallery-4-recalled.png");
+			case 97 -> {
+				capture(c, "gallery-4-recalled.png");
+				LOG.info("PROBE plugin blocking SWAP: cancelled clicks={} (pickup clicks must not be blocked: 0)", cancelled);
+				blocked = null;
+			}
 			case 100 -> c.setScreen(new InventoryScreen(c.player));
 			case 104 -> capture(c, "gallery-5-inventory.png");
 			case 106 -> c.setScreen(null);
@@ -272,7 +280,27 @@ public class Probe implements ClientModInitializer {
 			case 334 -> c.setScreen(new KeybindsScreen(null, c.options));
 			case 338 -> LOG.info("PROBE vanilla key binds entries={} (must be > 50)", entries(c));
 			case 342 -> c.setScreen(null);
-			case 345 -> c.scheduleStop();
+			case 346 -> server(server, p -> {
+				PlayerInventory inv = p.getInventory();
+				inv.setStack(26, inv.getStack(7));
+				inv.setStack(7, new ItemStack(Items.STICK));
+			});
+			case 352 -> {
+				cancelled = 0;
+				blocked = SlotActionType.PICKUP;
+			}
+			case 353 -> key(c, GLFW.GLFW_KEY_L, GLFW.GLFW_PRESS);
+			case 354 -> key(c, GLFW.GLFW_KEY_F1, GLFW.GLFW_PRESS);
+			case 355 -> key(c, GLFW.GLFW_KEY_F1, GLFW.GLFW_RELEASE);
+			case 356 -> key(c, GLFW.GLFW_KEY_L, GLFW.GLFW_RELEASE);
+			case 385 -> {
+				blocked = null;
+				LOG.info("PROBE plugin blocking PICKUP: cancelled={} client hotbar7={} cursor={} (must be >0, Beretta 92FS, empty)", cancelled,
+					c.player.getInventory().getStack(7).getName().getString(), c.player.playerScreenHandler.getCursorStack().isEmpty() ? "empty" : c.player.playerScreenHandler.getCursorStack().getName().getString());
+				server(server, p -> LOG.info("PROBE plugin blocking PICKUP server: hotbar7={} cursor={} main=[{}]", p.getInventory().getStack(7).getName().getString(),
+					p.playerScreenHandler.getCursorStack().isEmpty() ? "empty" : p.playerScreenHandler.getCursorStack().getName().getString(), dump(p.getInventory(), 9, 36)));
+			}
+			case 392 -> c.scheduleStop();
 			default -> {
 			}
 		}

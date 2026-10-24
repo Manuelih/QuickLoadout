@@ -1,3 +1,9 @@
+## QuickLoadout 1.0.1
+
+- Fixed items (for example server guns) going back to their old slot right after a recall on servers whose plugins block hotbar-key swaps: items are now moved with normal pick-up-and-drop clicks
+- If the server still undoes a move, QuickLoadout notices it half a second later and tries again once with the other kind of click
+- Anything left on the cursor by a blocked click is put back into the inventory
+
 ## QuickLoadout 1.0.0
 
 First release, for Minecraft 1.21.8 - 1.21.11 (one jar).

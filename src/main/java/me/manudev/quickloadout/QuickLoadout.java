@@ -21,7 +21,10 @@ public class QuickLoadout implements ClientModInitializer {
 			KeyBinding.updateKeysByCode();
 			LoadoutInput.install(client);
 		});
-		ClientTickEvents.END_CLIENT_TICK.register(LoadoutInput::tick);
+		ClientTickEvents.END_CLIENT_TICK.register(client -> {
+			LoadoutInput.tick(client);
+			LoadoutManager.tick(client);
+		});
 		ScreenEvents.AFTER_INIT.register((client, screen, width, height) -> {
 			if (screen instanceof OptionsScreen) {
 				OptionsButton.add(screen);
