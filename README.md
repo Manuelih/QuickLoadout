@@ -43,15 +43,16 @@ Loadouts live in `config/quickloadout.json` and are shared by every world and se
 
 Hold **L** and press **F1**, **F2**, **F3** or **F4**. Every item is pulled from your main inventory, the other hotbar slots or the offhand and dropped into its saved slot.
 
-- **Full stacks:** split stacks are merged back to the saved amount, so 30 + 34 cobblestone become 64 again
-- **Smart matching:** same item and components (name, enchantments, potions, trims...), ignoring durability, repair cost and container contents. A worn sword is still your sword
+- **No fixed amounts:** saved 28 bread and ate 2? The 26 you have go back in the slot
+- **Empty slots stay empty:** slots that were empty when you saved are cleared into your inventory
+- **Smart matching:** the identical item first, then the same item ignoring durability and similar, then the same item with the same name. A worn sword is still your sword, and server items like guns with changing ammo or lore are still found
 - **Works on any server:** it only uses normal inventory clicks, the same a player makes by hand. Nothing to install on the server
 
 ## 📝 Know what's missing
 
 <img src=".github/readme/missing.jpg" alt="Know what's missing">
 
-Anything you don't have is listed right above your hotbar, with its **real display name** and how many are missing. A diamond renamed *"diamante"* shows up as *diamante*, not as *Diamond*.
+Items you don't have at all are listed right above your hotbar with their **real display name**. A diamond renamed *"diamante"* shows up as *diamante*, not as *Diamond*, and never gets replaced by a plain one.
 
 The chat stays clean: it is only used when you save a loadout.
 
@@ -62,7 +63,7 @@ The chat stays clean: it is only used when you save a loadout.
 | Save the hotbar to loadout 1-4 | hold **L** + **1 / 2 / 3 / 4** |
 | Recall loadout 1-4 | hold **L** + **F1 / F2 / F3 / F4** |
 
-Every key can be changed in **Options → Controls → Key Binds → Hotbar Settings**.
+Every key can be changed from the **QuickLoadout Settings...** button in the Options screen, or in **Controls → Key Binds → Hotbar Settings**.
 
 QuickLoadout is careful with the keys vanilla already uses:
 
@@ -106,7 +107,7 @@ Yes: set *Recall: Modifier key (hold)* to *Not bound* (press Esc while changing 
 <details>
 <summary><b>Can it lose my items?</b></summary>
 
-No. Items are only moved around inside your inventory, and empty slots in a loadout are left as they are.
+No. Items are only moved around inside your inventory. Slots saved empty are cleared into the inventory, and if it is full they are left as they are: nothing is ever dropped.
 </details>
 
 <details>

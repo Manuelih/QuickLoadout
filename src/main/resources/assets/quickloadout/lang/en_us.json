@@ -13,5 +13,8 @@
 	"quickloadout.saved": "Hotbar saved to loadout %s (%s items)",
 	"quickloadout.recalled": "Loadout %s recalled",
 	"quickloadout.recalled_partial": "Loadout %s recalled, missing: %s",
-	"quickloadout.not_saved": "Loadout %s is empty: save it first"
+	"quickloadout.not_saved": "Loadout %s is empty: save it first",
+	"quickloadout.settings.button": "QuickLoadout Settings...",
+	"quickloadout.settings.title": "QuickLoadout Settings",
+	"quickloadout.recalled_full": "Loadout %s recalled, inventory full: some slots could not be emptied"
 }

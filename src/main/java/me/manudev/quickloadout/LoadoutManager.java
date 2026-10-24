@@ -65,7 +65,7 @@ public final class LoadoutManager {
 
 		boolean[] placed = new boolean[HOTBAR];
 		for (int h = 0; h < HOTBAR; h++) {
-			placed[h] = ItemMatcher.matches(inventory.getStack(h), wanted[h]);
+			placed[h] = ItemMatcher.level(inventory.getStack(h), wanted[h]) >= ItemMatcher.STRICT;
 		}
 
 		for (int h = 0; h < HOTBAR; h++) {
@@ -73,7 +73,9 @@ public final class LoadoutManager {
 				continue;
 			}
 			int source = findSource(inventory, wanted[h], placed, h);
-			if (source < 0) {
+			int current = ItemMatcher.level(inventory.getStack(h), wanted[h]);
+			if (source < 0 || ItemMatcher.level(inventory.getStack(source), wanted[h]) <= current) {
+				placed[h] = current != ItemMatcher.NONE;
 				continue;
 			}
 			if (source < HOTBAR) {
@@ -86,27 +88,35 @@ public final class LoadoutManager {
 			placed[h] = true;
 		}
 
+		// Slots that were empty when the loadout was saved are emptied into the main inventory.
+		boolean full = false;
 		for (int h = 0; h < HOTBAR; h++) {
-			if (placed[h]) {
-				topUp(client, handler, inventory, h, wanted[h].getCount());
-			}
-		}
-
-		List<ItemStack> missing = new ArrayList<>();
-		List<Integer> counts = new ArrayList<>();
-		for (int h = 0; h < HOTBAR; h++) {
-			if (wanted[h].isEmpty()) {
+			if (!wanted[h].isEmpty() || inventory.getStack(h).isEmpty()) {
 				continue;
 			}
-			ItemStack current = inventory.getStack(h);
-			int have = ItemMatcher.matches(current, wanted[h]) ? current.getCount() : 0;
-			if (have < wanted[h].getCount()) {
-				addMissing(missing, counts, wanted[h], wanted[h].getCount() - have);
+			int free = -1;
+			for (int i = HOTBAR; i < MAIN_END && free < 0; i++) {
+				if (inventory.getStack(i).isEmpty()) {
+					free = i;
+				}
+			}
+			if (free < 0) {
+				full = true;
+				continue;
+			}
+			click(client, handler, free, h, SlotActionType.SWAP);
+		}
+
+		// Only items that are not in the inventory at all count as missing: a smaller stack is fine.
+		List<ItemStack> missing = new ArrayList<>();
+		for (int h = 0; h < HOTBAR; h++) {
+			if (!wanted[h].isEmpty() && !ItemMatcher.matches(inventory.getStack(h), wanted[h])) {
+				addMissing(missing, wanted[h]);
 			}
 		}
 
 		if (missing.isEmpty()) {
-			Messages.actionBar(client, Text.translatable("quickloadout.recalled", loadout + 1));
+			Messages.actionBar(client, Text.translatable(full ? "quickloadout.recalled_full" : "quickloadout.recalled", loadout + 1));
 			return;
 		}
 		MutableText list = Text.empty();
@@ -114,12 +124,12 @@ public final class LoadoutManager {
 			if (i > 0) {
 				list.append(", ");
 			}
-			list.append(counts.get(i) + "× ").append(missing.get(i).getName());
+			list.append(missing.get(i).getName());
 		}
 		Messages.actionBar(client, Text.translatable("quickloadout.recalled_partial", loadout + 1, list));
 	}
 
-	// Prefers an identical stack, then the main inventory over other hotbar slots, then the biggest stack.
+	// Prefers the closest match, then the main inventory over other hotbar slots, then the biggest stack.
 	private static int findSource(PlayerInventory inventory, ItemStack wanted, boolean[] placed, int target) {
 		int best = -1;
 		int bestScore = -1;
@@ -128,59 +138,26 @@ public final class LoadoutManager {
 				continue;
 			}
 			ItemStack stack = inventory.getStack(i);
-			if (ItemMatcher.matches(stack, wanted) && scoreOf(stack, wanted, i) > bestScore) {
+			int level = ItemMatcher.level(stack, wanted);
+			if (level == ItemMatcher.NONE) {
+				continue;
+			}
+			int score = level * 1000 + (i >= HOTBAR && i < MAIN_END ? 100 : 0) + Math.min(stack.getCount(), 99);
+			if (score > bestScore) {
 				best = i;
-				bestScore = scoreOf(stack, wanted, i);
+				bestScore = score;
 			}
 		}
 		return best;
 	}
 
-	private static int scoreOf(ItemStack stack, ItemStack wanted, int index) {
-		int score = Math.min(stack.getCount(), 99);
-		if (index >= HOTBAR && index < MAIN_END) {
-			score += 100;
-		}
-		if (ItemMatcher.exact(stack, wanted)) {
-			score += 1000;
-		}
-		return score;
-	}
-
-	// Merges identical stacks from the main inventory until the saved amount is reached.
-	private static void topUp(MinecraftClient client, PlayerScreenHandler handler, PlayerInventory inventory, int h, int amount) {
-		for (int guard = 0; guard < MAIN_END; guard++) {
-			ItemStack current = inventory.getStack(h);
-			if (current.getCount() >= amount || current.getCount() >= current.getMaxCount()) {
-				return;
-			}
-			int source = -1;
-			for (int i = HOTBAR; i < MAIN_END; i++) {
-				if (ItemMatcher.exact(inventory.getStack(i), current)) {
-					source = i;
-					break;
-				}
-			}
-			if (source < 0) {
-				return;
-			}
-			click(client, handler, source, 0, SlotActionType.PICKUP);
-			click(client, handler, HOTBAR_SLOT + h, 0, SlotActionType.PICKUP);
-			if (!handler.getCursorStack().isEmpty()) {
-				click(client, handler, source, 0, SlotActionType.PICKUP);
-			}
-		}
-	}
-
-	private static void addMissing(List<ItemStack> missing, List<Integer> counts, ItemStack wanted, int count) {
-		for (int i = 0; i < missing.size(); i++) {
-			if (ItemMatcher.matches(missing.get(i), wanted)) {
-				counts.set(i, counts.get(i) + count);
+	private static void addMissing(List<ItemStack> missing, ItemStack wanted) {
+		for (ItemStack entry : missing) {
+			if (ItemMatcher.matches(entry, wanted)) {
 				return;
 			}
 		}
 		missing.add(wanted);
-		counts.add(count);
 	}
 
 	private static void click(MinecraftClient client, PlayerScreenHandler handler, int slot, int button, SlotActionType action) {

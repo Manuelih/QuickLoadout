@@ -4,7 +4,10 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import me.manudev.quickloadout.LoadoutKeys;
 import me.manudev.quickloadout.LoadoutStore;
+import net.fabricmc.fabric.api.client.screen.v1.Screens;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.option.OptionsScreen;
+import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
@@ -12,6 +15,9 @@ import net.minecraft.client.gui.screen.option.ControlsListWidget;
 import net.minecraft.client.gui.screen.option.KeybindsScreen;
 import net.minecraft.client.util.ScreenshotRecorder;
 import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.LoreComponent;
+import net.minecraft.component.type.NbtComponent;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -24,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.util.List;
 
 public class Probe implements ClientModInitializer {
 	private static final Logger LOG = LoggerFactory.getLogger("PROBE");
@@ -44,6 +51,14 @@ public class Probe implements ClientModInitializer {
 		GLFWKeyCallback cb = GLFW.glfwSetKeyCallback(handle, null);
 		GLFW.glfwSetKeyCallback(handle, cb);
 		cb.invoke(handle, key, GLFW.glfwGetKeyScancode(key), action, 0);
+	}
+
+	private static ItemStack gun(int ammo) {
+		ItemStack gun = named(new ItemStack(Items.IRON_HOE), "Beretta 92FS");
+		NbtCompound data = new NbtCompound();
+		data.putInt("ammo", ammo);
+		gun.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(data));
+		return gun;
 	}
 
 	private static ItemStack named(ItemStack stack, String name) {
@@ -92,6 +107,7 @@ public class Probe implements ClientModInitializer {
 					inv.setStack(4, new ItemStack(Items.GOLDEN_APPLE, 3));
 					inv.setStack(5, new ItemStack(Items.BOW));
 					inv.setStack(6, new ItemStack(Items.WATER_BUCKET));
+					inv.setStack(7, gun(15));
 					inv.setStack(8, new ItemStack(Items.TORCH, 32));
 					inv.setStack(20, new ItemStack(Items.ARROW, 64));
 					inv.setSelectedSlot(0);
@@ -123,7 +139,10 @@ public class Probe implements ClientModInitializer {
 				inv.setStack(15, new ItemStack(Items.COBBLESTONE, 20));
 				inv.setStack(0, new ItemStack(Items.DIRT, 16));
 				inv.setStack(5, new ItemStack(Items.OAK_PLANKS, 40));
-				inv.setStack(3, new ItemStack(Items.BOW));
+				ItemStack bow = new ItemStack(Items.BOW);
+				bow.set(DataComponentTypes.LORE, new LoreComponent(List.of(Text.literal("Matricola GF.F59.005"))));
+				inv.setStack(3, bow);
+				inv.setStack(25, gun(3));
 				inv.setStack(40, new ItemStack(Items.TORCH, 32));
 				inv.setStack(22, new ItemStack(Items.WATER_BUCKET));
 				inv.setSelectedSlot(0);
@@ -232,10 +251,40 @@ public class Probe implements ClientModInitializer {
 				KeyBinding.updateKeysByCode();
 				c.options.write();
 			}
-			case 315 -> c.scheduleStop();
+			case 316 -> c.setScreen(new OptionsScreen(null, c.options));
+			case 320 -> {
+				StringBuilder labels = new StringBuilder();
+				for (var b : Screens.getButtons(c.currentScreen)) {
+					labels.append('[').append(b.getMessage().getString()).append(" @").append(b.getX()).append(',').append(b.getY()).append("] ");
+				}
+				LOG.info("PROBE options buttons: {}", labels);
+				capture(c, "gallery-9-options.png");
+			}
+			case 324 -> {
+				for (var b : Screens.getButtons(c.currentScreen)) {
+					if (b.getMessage().getString().contains("QuickLoadout") && b instanceof ButtonWidget button) {
+						button.@@CLICK@@;
+					}
+				}
+			}
+			case 328 -> LOG.info("PROBE settings screen: {} title={} entries={} (must be LoadoutKeysScreen, 11)", c.currentScreen.getClass().getSimpleName(), c.currentScreen.getTitle().getString(), entries(c));
+			case 330 -> capture(c, "gallery-10-settings.png");
+			case 334 -> c.setScreen(new KeybindsScreen(null, c.options));
+			case 338 -> LOG.info("PROBE vanilla key binds entries={} (must be > 50)", entries(c));
+			case 342 -> c.setScreen(null);
+			case 345 -> c.scheduleStop();
 			default -> {
 			}
 		}
+	}
+
+	private static int entries(MinecraftClient c) {
+		for (var child : c.currentScreen.children()) {
+			if (child instanceof ControlsListWidget list) {
+				return list.children().size();
+			}
+		}
+		return -1;
 	}
 
 	private static void capture(MinecraftClient c, String name) {

@@ -3,6 +3,8 @@ package me.manudev.quickloadout;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
+import net.minecraft.client.gui.screen.option.OptionsScreen;
 import net.minecraft.client.option.KeyBinding;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,5 +22,10 @@ public class QuickLoadout implements ClientModInitializer {
 			LoadoutInput.install(client);
 		});
 		ClientTickEvents.END_CLIENT_TICK.register(LoadoutInput::tick);
+		ScreenEvents.AFTER_INIT.register((client, screen, width, height) -> {
+			if (screen instanceof OptionsScreen) {
+				OptionsButton.add(screen);
+			}
+		});
 	}
 }

@@ -8,12 +8,13 @@ Building, fighting, farming, exploring: each needs a different hotbar. Set it up
 
 - 💾 **4 loadouts:** save the current hotbar with **L + 1 / 2 / 3 / 4**
 - ⚡ **One key recall:** **L + F1 / F2 / F3 / F4** rebuilds the saved hotbar from your inventory (main inventory, other hotbar slots and offhand)
-- 📦 **Fills the stacks:** saved 64 cobblestone but you have 30 + 34 in two stacks? They are merged back into one full stack
-- 📝 **Clear missing list:** anything you don't have is shown above the hotbar with its real name and amount, e.g. *» ʟᴏᴀᴅᴏᴜᴛ 1 ʀᴇᴄᴀʟʟᴇᴅ, ᴍɪꜱꜱɪɴɢ: 2× ᴅɪᴀᴍᴀɴᴛᴇ, 3× ɢᴏʟᴅᴇɴ ᴀᴘᴘʟᴇ*. Renamed items show their custom name
+- 📦 **No fixed amounts:** saved 28 bread and ate 2? The 26 you have go back in the slot, no complaints
+- 🧹 **Empty slots stay empty:** slots that were empty when you saved are cleared into your inventory
+- 📝 **Clear missing list:** items you don't have at all are shown above the hotbar with their real name, e.g. *» ʟᴏᴀᴅᴏᴜᴛ 1 ʀᴇᴄᴀʟʟᴇᴅ, ᴍɪꜱꜱɪɴɢ: ᴅɪᴀᴍᴀɴᴛᴇ, ɢᴏʟᴅᴇɴ ᴀᴘᴘʟᴇ*. Renamed items show their custom name
 - 🎨 **Clean messages:** small caps text. Saving writes one line in chat, switching loadouts never spams the chat: it only uses the line above the hotbar
-- 🔍 **Smart matching:** a worn sword is still your sword, but a sword with a different name or enchantments is not
+- 🔍 **Smart matching:** a worn sword is still your sword, and server items like guns with changing ammo or lore are still found by their name
 - 🌐 **Works on any server:** it only uses normal inventory clicks, the same a player makes by hand. Nothing to install on the server
-- ⌨️ **Every key can be changed** in *Options → Controls → Key Binds → Hotbar Settings*
+- ⚙️ **QuickLoadout Settings** button in the Options screen, with all the keys of the mod. They are also in *Controls → Key Binds → Hotbar Settings*
 - 🇬🇧 English and 🇮🇹 Italian: messages follow your game language
 
 ## 🎮 How to use
@@ -40,14 +41,19 @@ Vanilla already uses some of these keys, so QuickLoadout takes care not to break
 
 ## 🔍 How items are matched
 
-An item counts as the saved one when it is the **same item with the same components**: custom name, enchantments, potion effects, trims, custom data and so on. Things that change while you use an item are ignored: **durability, anvil repair cost, shulker box / bundle contents and a loaded crossbow's arrow**.
+The amount never matters: whatever stack you have goes in the slot. For each slot QuickLoadout looks for the closest item it can find:
 
-So a damaged *Diamond Sword* still matches the sword you saved, while a diamond renamed *"diamante"* is a different item from a plain *Diamond*. When there are several candidates, an identical stack is preferred, then the main inventory over other hotbar slots, then the biggest stack.
+1. **Identical** item
+2. Same item, ignoring what changes with use: **durability, anvil repair cost, shulker box / bundle contents, a loaded crossbow's arrow**
+3. Same item with the **same name**, even if lore, enchantments or server data (ammo, serial numbers...) changed
+4. A **custom-named** server item with the same name, even if its base item changed
+
+A diamond renamed *"diamante"* never replaces a plain *Diamond*. When there are several candidates, the main inventory is preferred over other hotbar slots, then the biggest stack.
 
 ## 📌 Good to know
 
 - Loadouts are saved in `config/quickloadout.json` and shared by all worlds and servers
-- Empty slots in a loadout are left as they are, so a recall never throws your items away
+- Slots that were empty when you saved are moved into your inventory. Items are never dropped: if the inventory is full they stay where they are
 - Recall only works with no screen open (not while typing in chat or with the inventory open)
 - Client-side only. Works in singleplayer and on any server (vanilla, Paper, Spigot...)
 

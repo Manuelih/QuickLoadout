@@ -39,6 +39,16 @@ public final class LoadoutKeys {
 		}
 	}
 
+	/** Every QuickLoadout key, in the order shown by the settings screen. */
+	public static KeyBinding[] all() {
+		KeyBinding[] keys = new KeyBinding[LOADOUTS * 2 + 2];
+		keys[0] = saveModifier;
+		keys[LOADOUTS + 1] = recallModifier;
+		System.arraycopy(SAVE, 0, keys, 1, LOADOUTS);
+		System.arraycopy(RECALL, 0, keys, LOADOUTS + 2, LOADOUTS);
+		return keys;
+	}
+
 	public static boolean isOwn(KeyBinding binding) {
 		if (binding == saveModifier || binding == recallModifier) {
 			return true;

@@ -13,5 +13,8 @@
 	"quickloadout.saved": "Hotbar %s salvata (%s oggetti)",
 	"quickloadout.recalled": "Hotbar %s ripresa",
 	"quickloadout.recalled_partial": "Hotbar %s ripresa, mancano: %s",
-	"quickloadout.not_saved": "La hotbar %s è vuota: salvala prima"
+	"quickloadout.not_saved": "La hotbar %s è vuota: salvala prima",
+	"quickloadout.settings.button": "Impostazioni QuickLoadout...",
+	"quickloadout.settings.title": "Impostazioni QuickLoadout",
+	"quickloadout.recalled_full": "Hotbar %s ripresa, inventario pieno: alcuni slot non sono stati svuotati"
 }
