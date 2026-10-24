@@ -1,0 +1,30 @@
+{
+	"schemaVersion": 1,
+	"id": "quickloadout",
+	"version": "${version}",
+	"name": "QuickLoadout",
+	"description": "Save up to 4 hotbar layouts and bring them back with one key: items are pulled from your inventory into the right slots, and anything missing is shown above the hotbar.",
+	"authors": [
+		"MaNu"
+	],
+	"contact": {
+		"homepage": "https://modrinth.com/mod/quickloadout"
+	},
+	"license": "MIT",
+	"icon": "assets/quickloadout/icon.png",
+	"environment": "client",
+	"entrypoints": {
+		"client": [
+			"me.manudev.quickloadout.QuickLoadout"
+		]
+	},
+	"mixins": [
+		"quickloadout.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=${loader_version}",
+		"minecraft": ">=1.21.8 <=1.21.11",
+		"java": ">=21",
+		"fabric-api": "*"
+	}
+}

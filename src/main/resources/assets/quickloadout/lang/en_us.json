@@ -1,0 +1,17 @@
+{
+	"key.category.quickloadout.hotbar": "Hotbar Settings",
+	"key.quickloadout.save": "Save: Modifier key (hold)",
+	"key.quickloadout.save.1": "Save: loadout 1",
+	"key.quickloadout.save.2": "Save: loadout 2",
+	"key.quickloadout.save.3": "Save: loadout 3",
+	"key.quickloadout.save.4": "Save: loadout 4",
+	"key.quickloadout.recall": "Recall: Modifier key (hold)",
+	"key.quickloadout.recall.1": "Recall: loadout 1",
+	"key.quickloadout.recall.2": "Recall: loadout 2",
+	"key.quickloadout.recall.3": "Recall: loadout 3",
+	"key.quickloadout.recall.4": "Recall: loadout 4",
+	"quickloadout.saved": "Hotbar saved to loadout %s (%s items)",
+	"quickloadout.recalled": "Loadout %s recalled",
+	"quickloadout.recalled_partial": "Loadout %s recalled, missing: %s",
+	"quickloadout.not_saved": "Loadout %s is empty: save it first"
+}

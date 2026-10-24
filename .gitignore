@@ -1,0 +1,11 @@
+.gradle/
+build/
+run/
+out/
+.idea/
+*.iml
+release/
+modrinth/*.md
+!modrinth/DESCRIPTION.md
+!modrinth/CHANGELOG.md
+modrinth/*.txt

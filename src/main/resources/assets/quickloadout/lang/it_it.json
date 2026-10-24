@@ -1,0 +1,17 @@
+{
+	"key.category.quickloadout.hotbar": "Hotbar Settings",
+	"key.quickloadout.save": "Salva: Modificatore (tieni premuto)",
+	"key.quickloadout.save.1": "Salva: hotbar 1",
+	"key.quickloadout.save.2": "Salva: hotbar 2",
+	"key.quickloadout.save.3": "Salva: hotbar 3",
+	"key.quickloadout.save.4": "Salva: hotbar 4",
+	"key.quickloadout.recall": "Riprendi: Modificatore (tieni premuto)",
+	"key.quickloadout.recall.1": "Riprendi: hotbar 1",
+	"key.quickloadout.recall.2": "Riprendi: hotbar 2",
+	"key.quickloadout.recall.3": "Riprendi: hotbar 3",
+	"key.quickloadout.recall.4": "Riprendi: hotbar 4",
+	"quickloadout.saved": "Hotbar %s salvata (%s oggetti)",
+	"quickloadout.recalled": "Hotbar %s ripresa",
+	"quickloadout.recalled_partial": "Hotbar %s ripresa, mancano: %s",
+	"quickloadout.not_saved": "La hotbar %s è vuota: salvala prima"
+}
