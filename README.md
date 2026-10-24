@@ -55,7 +55,7 @@ Anything you don't have is listed right above your hotbar, with its **real displ
 
 The chat stays clean: it is only used when you save a loadout.
 
-## ⌨️ Keys
+## 🎹 Keys
 
 | Action | Default keys |
 |---|---|
@@ -131,7 +131,7 @@ English and Italian. Messages follow the game language.
 
 [Modrinth](https://modrinth.com/mod/quickloadout). Requires [Fabric API](https://modrinth.com/mod/fabric-api).
 
-## 🛠️ Building
+## 🔧 Building
 
 Requires JDK 21.
 
